@@ -1,0 +1,12 @@
+[Unit]
+Description=Daily macro analysis for U.S. stocks
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/kazuk/auto-macro-analyzer
+ExecStart=/home/kazuk/auto-macro-analyzer/scripts/run_daily.sh
+StandardOutput=append:/home/kazuk/auto-macro-analyzer/logs/daily.log
+StandardError=append:/home/kazuk/auto-macro-analyzer/logs/daily.log
+

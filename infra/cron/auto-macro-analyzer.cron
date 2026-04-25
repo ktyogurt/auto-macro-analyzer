@@ -1,0 +1,2 @@
+30 6 * * * cd /home/kazuk/auto-macro-analyzer && ./scripts/run_daily.sh >> ./logs/daily.log 2>&1
+
