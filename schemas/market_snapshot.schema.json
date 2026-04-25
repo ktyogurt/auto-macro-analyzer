@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "generated_at",
+    "availability",
+    "indices",
+    "volatility",
+    "rates"
+  ],
+  "properties": {
+    "generated_at": {
+      "type": "string"
+    },
+    "availability": {
+      "type": "string",
+      "enum": [
+        "available",
+        "unavailable"
+      ]
+    },
+    "indices": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "SPY": {
+          "$ref": "#/$defs/indexSnapshot"
+        },
+        "QQQ": {
+          "$ref": "#/$defs/indexSnapshot"
+        },
+        "IWM": {
+          "$ref": "#/$defs/indexSnapshot"
+        }
+      }
+    },
+    "volatility": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "vix_level": {
+          "type": "number"
+        },
+        "vix_change_pct": {
+          "type": "number"
+        }
+      }
+    },
+    "rates": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "us10y_yield": {
+          "type": "number"
+        },
+        "us10y_change_bps": {
+          "type": "number"
+        },
+        "is_spiking": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "indexSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "change_pct",
+        "above_20ma",
+        "downtrend_3d"
+      ],
+      "properties": {
+        "change_pct": {
+          "type": "number"
+        },
+        "above_20ma": {
+          "type": "boolean"
+        },
+        "downtrend_3d": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}
+

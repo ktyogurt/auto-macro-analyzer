@@ -1,0 +1,11 @@
+[Unit]
+Description=Run daily macro analysis once per day
+
+[Timer]
+OnCalendar=*-*-* 06:30:00
+Persistent=true
+Unit=auto-macro-analyzer.service
+
+[Install]
+WantedBy=timers.target
+
