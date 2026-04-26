@@ -87,6 +87,12 @@ source .env
 set +a
 ```
 
+`venv` で `boto3` を入れている場合は、`.env` に `PYTHON_BIN` を設定すると `run_daily.sh` からその Python を使えます。
+
+```bash
+PYTHON_BIN=/home/ktyogurt/myenv/bin/python
+```
+
 ## 実行フロー
 
 1. `scripts/fetch_news.sh` が RSS を取得します
@@ -121,6 +127,7 @@ set +a
 - `DYNAMODB_TABLE`: アップロード先テーブル名
 - `AWS_REGION`: 使用リージョン。未設定時は AWS SDK の既定値を利用
 - `AWS_PROFILE`: ローカルの AWS プロファイル名
+- `PYTHON_BIN`: 使用する Python 実行ファイル。`venv` を使う場合はその絶対パス
 - `DYNAMODB_ENDPOINT_URL`: 任意。DynamoDB Local などに向ける場合に利用
 - `DYNAMODB_PK_NAME`: パーティションキー属性名。既定値は `pk`
 - `DYNAMODB_SK_NAME`: ソートキー属性名。既定値は `sk`
@@ -134,8 +141,12 @@ set +a
 
 ```bash
 DYNAMODB_TABLE=your-table DYNAMODB_DRY_RUN=1 \
-python3 scripts/upload_today_to_dynamodb.py data/today.json
+/home/ktyogurt/myenv/bin/python scripts/upload_today_to_dynamodb.py data/today.json
 ```
+
+## cron 例
+
+`infra/cron/auto-macro-analyzer.cron` は日本時間 11:00 実行の例です。`CRON_TZ=Asia/Tokyo` を付けているため、サーバー自体が UTC でも 11:00 JST 基準で動かせます。
 
 ## 将来拡張
 

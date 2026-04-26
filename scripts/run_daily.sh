@@ -15,6 +15,17 @@ if [[ -f "$PROJECT_ROOT/.env" ]]; then
   set +a
 fi
 
+readonly PYTHON_BIN="${PYTHON_BIN:-python3}"
+if [[ "$PYTHON_BIN" == */* ]]; then
+  if [[ ! -x "$PYTHON_BIN" ]]; then
+    echo "Configured PYTHON_BIN is not executable: $PYTHON_BIN" >&2
+    exit 1
+  fi
+elif ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
+  echo "Python executable not found: $PYTHON_BIN" >&2
+  exit 1
+fi
+
 mkdir -p "$DATA_DIR" "$PROJECT_ROOT/logs"
 
 if [[ ! -f "$TODAY_JSON_PATH" ]]; then
@@ -38,23 +49,23 @@ printf '[%s] Fetching RSS feed\n' "$(date --iso-8601=seconds)"
 "$SCRIPT_DIR/fetch_news.sh" > "$tmp_rss"
 
 printf '[%s] Normalizing news feed\n' "$(date --iso-8601=seconds)"
-python3 "$SCRIPT_DIR/normalize_news.py" "$tmp_rss" "$tmp_news_json"
+"$PYTHON_BIN" "$SCRIPT_DIR/normalize_news.py" "$tmp_rss" "$tmp_news_json"
 
 printf '[%s] Summarizing news snapshot\n' "$(date --iso-8601=seconds)"
 "$SCRIPT_DIR/summarize_news.sh" "$tmp_news_json" "$tmp_news_snapshot"
 
 printf '[%s] Building market snapshot\n' "$(date --iso-8601=seconds)"
-python3 "$SCRIPT_DIR/build_market_snapshot.py" "$tmp_market_snapshot"
+"$PYTHON_BIN" "$SCRIPT_DIR/build_market_snapshot.py" "$tmp_market_snapshot"
 
 printf '[%s] Running final analysis\n' "$(date --iso-8601=seconds)"
 "$SCRIPT_DIR/run_final_analysis.sh" "$tmp_news_snapshot" "$tmp_market_snapshot" "$TODAY_JSON_PATH" "$RECENT_JSON_PATH"
 
 printf '[%s] Rolling recent_7days.json\n' "$(date --iso-8601=seconds)"
-python3 "$SCRIPT_DIR/roll_recent_7days.py" "$TODAY_JSON_PATH" "$RECENT_JSON_PATH"
+"$PYTHON_BIN" "$SCRIPT_DIR/roll_recent_7days.py" "$TODAY_JSON_PATH" "$RECENT_JSON_PATH"
 
 if [[ -n "${DYNAMODB_TABLE:-}" ]]; then
   printf '[%s] Uploading today.json to DynamoDB\n' "$(date --iso-8601=seconds)"
-  python3 "$SCRIPT_DIR/upload_today_to_dynamodb.py" "$TODAY_JSON_PATH"
+  "$PYTHON_BIN" "$SCRIPT_DIR/upload_today_to_dynamodb.py" "$TODAY_JSON_PATH"
 else
   printf '[%s] Skipping DynamoDB upload (DYNAMODB_TABLE is not set)\n' "$(date --iso-8601=seconds)"
 fi

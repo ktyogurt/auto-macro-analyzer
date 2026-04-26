@@ -13,6 +13,7 @@ readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 readonly PROMPT_PATH="$PROJECT_ROOT/prompts/news_summary.md"
 readonly SCHEMA_PATH="$PROJECT_ROOT/schemas/news_snapshot.schema.json"
+readonly PYTHON_BIN="${PYTHON_BIN:-python3}"
 
 if [[ ! -f "$NORMALIZED_NEWS_PATH" ]]; then
   echo "Normalized news input not found: $NORMALIZED_NEWS_PATH" >&2
@@ -54,7 +55,7 @@ fi
 
 codex "${codex_args[@]}" < "$tmp_prompt"
 
-python3 - "$tmp_output" "$NEWS_SNAPSHOT_PATH" <<'PY'
+"$PYTHON_BIN" - "$tmp_output" "$NEWS_SNAPSHOT_PATH" <<'PY'
 import json
 import sys
 from pathlib import Path
@@ -72,4 +73,3 @@ target_path.write_text(
     encoding="utf-8",
 )
 PY
-

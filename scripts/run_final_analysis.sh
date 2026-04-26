@@ -15,6 +15,7 @@ readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 readonly PROMPT_PATH="$PROJECT_ROOT/prompts/final_analysis.md"
 readonly SCHEMA_PATH="$PROJECT_ROOT/schemas/daily_analysis.schema.json"
+readonly PYTHON_BIN="${PYTHON_BIN:-python3}"
 
 if [[ ! -f "$NEWS_SNAPSHOT_PATH" ]]; then
   echo "News snapshot input not found: $NEWS_SNAPSHOT_PATH" >&2
@@ -71,7 +72,7 @@ fi
 
 codex "${codex_args[@]}" < "$tmp_prompt"
 
-python3 - "$tmp_output" "$TODAY_JSON_PATH" <<'PY'
+"$PYTHON_BIN" - "$tmp_output" "$TODAY_JSON_PATH" <<'PY'
 import json
 import sys
 from pathlib import Path
@@ -89,4 +90,3 @@ target_path.write_text(
     encoding="utf-8",
 )
 PY
-
