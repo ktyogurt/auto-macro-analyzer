@@ -10,7 +10,9 @@ readonly RECENT_JSON_PATH="$DATA_DIR/recent_7days.json"
 
 if [[ -f "$PROJECT_ROOT/.env" ]]; then
   # shellcheck disable=SC1091
+  set -a
   source "$PROJECT_ROOT/.env"
+  set +a
 fi
 
 mkdir -p "$DATA_DIR" "$PROJECT_ROOT/logs"
@@ -49,5 +51,12 @@ printf '[%s] Running final analysis\n' "$(date --iso-8601=seconds)"
 
 printf '[%s] Rolling recent_7days.json\n' "$(date --iso-8601=seconds)"
 python3 "$SCRIPT_DIR/roll_recent_7days.py" "$TODAY_JSON_PATH" "$RECENT_JSON_PATH"
+
+if [[ -n "${DYNAMODB_TABLE:-}" ]]; then
+  printf '[%s] Uploading today.json to DynamoDB\n' "$(date --iso-8601=seconds)"
+  python3 "$SCRIPT_DIR/upload_today_to_dynamodb.py" "$TODAY_JSON_PATH"
+else
+  printf '[%s] Skipping DynamoDB upload (DYNAMODB_TABLE is not set)\n' "$(date --iso-8601=seconds)"
+fi
 
 printf '[%s] Completed\n' "$(date --iso-8601=seconds)"
