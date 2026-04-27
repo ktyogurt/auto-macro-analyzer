@@ -14,6 +14,7 @@ readonly PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 readonly PROMPT_PATH="$PROJECT_ROOT/prompts/news_summary.md"
 readonly SCHEMA_PATH="$PROJECT_ROOT/schemas/news_snapshot.schema.json"
 readonly PYTHON_BIN="${PYTHON_BIN:-python3}"
+readonly CODEX_BIN="${CODEX_BIN:-codex}"
 
 if [[ ! -f "$NORMALIZED_NEWS_PATH" ]]; then
   echo "Normalized news input not found: $NORMALIZED_NEWS_PATH" >&2
@@ -53,7 +54,7 @@ if [[ -n "${CODEX_MODEL:-}" ]]; then
   codex_args+=(-m "$CODEX_MODEL")
 fi
 
-codex "${codex_args[@]}" < "$tmp_prompt"
+"$CODEX_BIN" "${codex_args[@]}" < "$tmp_prompt"
 
 "$PYTHON_BIN" - "$tmp_output" "$NEWS_SNAPSHOT_PATH" <<'PY'
 import json

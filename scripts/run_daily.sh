@@ -26,6 +26,20 @@ elif ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
   exit 1
 fi
 
+readonly CODEX_BIN="${CODEX_BIN:-codex}"
+if [[ "$CODEX_BIN" == */* ]]; then
+  if [[ ! -x "$CODEX_BIN" ]]; then
+    echo "Configured CODEX_BIN is not executable: $CODEX_BIN" >&2
+    exit 1
+  fi
+elif ! command -v "$CODEX_BIN" >/dev/null 2>&1; then
+  echo "Codex executable not found: $CODEX_BIN" >&2
+  exit 1
+fi
+
+export PYTHON_BIN
+export CODEX_BIN
+
 mkdir -p "$DATA_DIR" "$PROJECT_ROOT/logs"
 
 if [[ ! -f "$TODAY_JSON_PATH" ]]; then

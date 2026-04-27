@@ -93,6 +93,12 @@ set +a
 PYTHON_BIN=/home/ktyogurt/myenv/bin/python
 ```
 
+cron で `codex` が見つからない環境では、`.env` に `CODEX_BIN` を絶対パスで設定してください。
+
+```bash
+CODEX_BIN=/home/ktyogurt/.nvm/versions/node/v22.22.2/bin/codex
+```
+
 ## 実行フロー
 
 1. `scripts/fetch_news.sh` が RSS を取得します
@@ -128,6 +134,7 @@ PYTHON_BIN=/home/ktyogurt/myenv/bin/python
 - `AWS_REGION`: 使用リージョン。未設定時は AWS SDK の既定値を利用
 - `AWS_PROFILE`: ローカルの AWS プロファイル名
 - `PYTHON_BIN`: 使用する Python 実行ファイル。`venv` を使う場合はその絶対パス
+- `CODEX_BIN`: 使用する `codex` 実行ファイル。cron では絶対パス推奨
 - `DYNAMODB_ENDPOINT_URL`: 任意。DynamoDB Local などに向ける場合に利用
 - `DYNAMODB_PK_NAME`: パーティションキー属性名。既定値は `pk`
 - `DYNAMODB_SK_NAME`: ソートキー属性名。既定値は `sk`
